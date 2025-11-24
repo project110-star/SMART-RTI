@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart RTI</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
+
+    /* ===== Hero Section ===== */
+    .hero {
+      height: 90vh;
+      background: linear-gradient(135deg, #90ee90, #32cd32); /* attractive green gradient */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      color: white;
+      position: relative;
+    }
+
+    .logo {
+      width: 200px;
+      height: auto;
+      margin-bottom: 20px;
+      z-index: 2;
+      filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      z-index: 2;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero h1 span {
+      font-style: italic;
+      font-weight: 300;
+    }
+
+    .hero p {
+      font-size: 18px;
+      margin-top: 10px;
+      z-index: 2;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .btn {
+      margin-top: 20px;
+      padding: 15px 40px;
+      background: #ffffff;
+      color: #000;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+      z-index: 2;
+      box-shadow: 2px 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 2px 6px 15px rgba(0,0,0,0.3);
+    }
+
+    /* ===== Sliding Banner ===== */
+    .slider {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      overflow: hidden;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      z-index: 3;
+    }
+
+    .slide-text {
+      display: inline-block;
+      white-space: nowrap;
+      animation: slide 10s linear infinite;
+    }
+
+    @keyframes slide {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* ===== Language Button ===== */
+    #langButton {
+      margin-top: 15px; /* below login button */
+      padding: 12px 25px;
+      background: #ffd700; /* visible */
+      color: #000;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 2;
+      box-shadow: 2px 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    #langButton:hover {
+      transform: translateY(-2px);
+      box-shadow: 2px 6px 12px rgba(0,0,0,0.3);
+    }
+
+    /* ===== Info Sections ===== */
+    .info {
+      background: #ffffff;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .info h2 {
+      font-size: 28px;
+      margin-bottom: 15px;
+    }
+
+    .info p {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #333;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .reviews {
+      background: #eef3ff;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .review-card {
+      background:white; 
+      padding:20px; 
+      border-radius:12px; 
+      box-shadow:0 4px 12px rgba(0,0,0,0.1); 
+      text-align:left;
+    }
+
+    .review-header {
+      display:flex; 
+      justify-content:space-between; 
+      align-items:center; 
+      flex-wrap:wrap;
+    }
+
+    /* Language Popup */
+    #langPopup {
+      display:none; 
+      position:fixed; 
+      top:0; 
+      left:0; 
+      width:100%; 
+      height:100%;
+      background:rgba(0,0,0,0.5); 
+      justify-content:center; 
+      align-items:center; 
+      z-index:9999;
+    }
+
+    #langPopup .popup-content {
+      background:white; 
+      padding:30px 25px; 
+      border-radius:14px; 
+      width:90%; 
+      max-width:330px; 
+      text-align:center;
+      box-shadow:0 6px 20px rgba(0,0,0,0.2); 
+      animation:pop 0.3s ease;
+    }
+
+    @keyframes pop {
+      0% { transform:scale(0.7); opacity:0; }
+      100% { transform:scale(1); opacity:1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sliding Banner Top -->
+  <div class="slider">
+    <div class="slide-text">Welcome to AI Verified Smart RTI — Fast • Secure • Transparent</div>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <!-- Logo -->
+    <img src="logo.png" alt="Smart RTI Logo" class="logo" />
+
+    <h1>Smart <span>RTI</span></h1>
+    <p>AI Powered • Fast • Secure</p>
+    <a href="login.html" class="btn">LOGIN</a>
+
+    <!-- Language Button below LOGIN -->
+    <button id="langButton" onclick="document.getElementById('langPopup').style.display='flex'">🌐 Language</button>
+  </div>
+
+  <!-- Language Popup -->
+  <div id="langPopup">
+    <div class="popup-content">
+      <h2 style="font-size:24px; margin-bottom:20px; color:#2c3e50;">Select Language</h2>
+      <button onclick="changeLanguage('en')" style="padding:12px 20px; margin-bottom:15px; width:100%; border:none; border-radius:8px; background:#4a90e2; color:white; font-size:16px; cursor:pointer;">English</button>
+      <button onclick="changeLanguage('hi')" style="padding:12px 20px; width:100%; border:none; border-radius:8px; background:#e24a4a; color:white; font-size:16px; cursor:pointer;">हिन्दी</button>
+      <p onclick="document.getElementById('langPopup').style.display='none'" style="margin-top:18px; font-size:15px; color:#555; cursor:pointer;">Close ✖</p>
+    </div>
+  </div>
+
+  <!-- Info Sections -->
+  <div class="info">
+    <h2 id="rti_heading">RTI क्यों ज़रूरी है?</h2>
+    <p id="rti_text">
+      RTI नागरिकों को पारदर्शिता देता है और सरकारी प्रक्रियाओं को जवाबदेह बनाता है।
+      Smart RTI आपकी RTI प्रक्रिया को और भी सुरक्षित बनाता है क्योंकि इसमें AI आधारित Real‑time Verification मौजूद है।
+    </p>
+  </div>
+
+  <div class="info" style="background:#e8faff; margin-top:0; padding:45px 20px;">
+    <h2 style='font-size:30px; color:#005f73; margin-bottom:15px;'>Smart RTI की विशेषताएँ</h2>
+    <div style='max-width:900px; margin:auto; text-align:left;'>
+      <ul style='font-size:18px; line-height:1.8; color:#222;'>
+        <li><strong>AI Fake RTI Detection:</strong> गलत इनपुट, mismatched IDs और suspicious activities तुरंत detect होती हैं।</li>
+        <li><strong>Live Status Tracking:</strong> RTI सबमिट होते ही real‑time tracking मिलता है।</li>
+        <li><strong>Auto‑Document Verification:</strong> Aadhaar / PAN / Address proofs AI द्वारा verify होते हैं।</li>
+        <li><strong>Error‑Free RTI Filling:</strong> Form भरते समय AI real-time errors बताकर rejection रोकता है।</li>
+        <li><strong>Secure Encryption:</strong> आपकी जानकारी उच्च स्तर की सुरक्षा में रहती है।</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info" style="background:#fff7e6; padding:50px 20px; text-align:center;">
+    <h2 style='font-size:30px; color:#d97706;'>RTI प्रक्रिया कैसे होती है?</h2>
+    <div style='max-width:850px; margin:auto; text-align:left; padding-top:15px;'>
+      <ol style='font-size:18px; color:#333; line-height:1.8;'>
+        <li><strong>Step 1:</strong> RTI फॉर्म में अपनी जानकारी और सवाल लिखें।</li>
+        <li><strong>Step 2:</strong> AI आपकी details verify करता है और Fake information flag करता है।</li>
+        <li><strong>Step 3:</strong> आपका RTI सही सरकारी विभाग को Auto‑Route होता है।</li>
+        <li><strong>Step 4:</strong> आप अपने मोबाइल से RTI का Real‑time Status देख सकते हैं।</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="reviews">
+    <h2 id="review_title" style="font-size:30px; margin-bottom:25px; color:#2c3e50;">User Reviews</h2>
+    <div style="display:flex; flex-direction:column; gap:20px; max-width:900px; margin:auto;">
+      <div class="review-card">
+        <div class="review-header">
+          <p style="font-size:18px; font-weight:600; margin:0;">Rahul Sharma</p>
+          <p style="font-size:20px; margin:0;">⭐⭐⭐⭐⭐</p>
+        </div>
+        <p id="rev1" style="font-size:16px; color:#333; margin-top:10px; line-height:1.6;">"Smart RTI ने मेरी फर्जी RTI को तुरंत पकड़ लिया। बहुत ही शानदार फीचर है!"</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-header">
+          <p style="font-size:18px; font-weight:600; margin:0;">Anjali Verma</p>
+          <p style="font-size:20px; margin:0;">⭐⭐⭐⭐</p>
+        </div>
+        <p id="rev2" style="font-size:16px; color:#333; margin-top:10px; line-height:1.6;">"AI Validation बहुत fast है और सिस्टम उपयोग करने में आसान है।"</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-header">
+          <p style="font-size:18px; font-weight:600; margin:0;">Mohit Singh</p>
+          <p style="font-size:20px; margin:0;">⭐⭐⭐⭐⭐</p>
+        </div>
+        <p id="rev3" style="font-size:16px; color:#333; margin-top:10px; line-height:1.6;">"Fake details को detect करना बहुत ही helpful है। Highly recommended!"</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const langData = {
+      en: {
+        rti_heading: "Why is RTI Important?",
+        rti_text: "RTI provides transparency and keeps government departments accountable. Smart RTI makes the process secure with AI-based verification.",
+        review_title: "User Reviews",
+        rev1: "Smart RTI immediately detected my fake RTI. Amazing feature!",
+        rev2: "AI validation is very fast and the system is easy to use.",
+        rev3: "Detecting fake details is very helpful. Highly recommended!"
+      },
+      hi: {
+        rti_heading: "RTI क्यों ज़रूरी है?",
+        rti_text: "RTI नागरिकों को पारदर्शिता देता है और सरकारी प्रक्रियाओं को जवाबदेह बनाता है। Smart RTI आपकी प्रक्रिया सुरक्षित बनाता है।",
+        review_title: "यूज़र रिव्यू",
+        rev1: "Smart RTI ने मेरी फर्जी RTI को तुरंत पकड़ लिया। बहुत ही शानदार फीचर है!",
+        rev2: "AI Validation बहुत fast है और सिस्टम उपयोग करने में आसान है।",
+        rev3: "Fake details को detect करना बहुत ही helpful है। Highly recommended!"
+      }
+    };
+
+    function changeLanguage(lang) {
+      document.getElementById('rti_heading').innerHTML = langData[lang].rti_heading;
+      document.getElementById('rti_text').innerHTML = langData[lang].rti_text;
+      document.getElementById('review_title').innerHTML = langData[lang].review_title;
+      document.getElementById('rev1').innerHTML = langData[lang].rev1;
+      document.getElementById('rev2').innerHTML = langData[lang].rev2;
+      document.getElementById('rev3').innerHTML = langData[lang].rev3;
+      document.getElementById('langPopup').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
