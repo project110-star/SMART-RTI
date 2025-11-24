@@ -1,0 +1,415 @@
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+<meta charset="UTF-8" />  
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />  
+<title>RTI Dashboard</title>  
+<style>  
+body {  
+    margin:0;  
+    font-family:Arial,sans-serif;  
+    background:#f1f5f9;  
+    overflow:hidden;  
+    height:100vh;  
+    display:flex;  
+    flex-direction:column;  
+}  /* ===== TOP BAR ===== */
+.topbar {
+background:#0066ff;
+color:#fff;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:18px;
+position:relative;
+}
+.topbar span { font-weight:bold; cursor:pointer; }
+.language-selector {
+display:flex;
+gap:10px;
+}
+.language-selector span {
+cursor:pointer;
+padding:5px 10px;
+border-radius:6px;
+background:rgba(255,255,255,0.2);
+transition:0.2s;
+}
+.language-selector span.active {
+background:#fff;
+color:#0066ff;
+font-weight:bold;
+}
+
+/* ===== MENU ===== */
+.menu {
+position:absolute;
+top:60px;
+left:0;
+width:200px;
+background:white;
+box-shadow:2px 2px 10px rgba(0,0,0,0.2);
+display:none;
+flex-direction:column;
+border-radius:0 0 10px 10px;
+z-index:1000;
+}
+.menu div {
+padding:15px;
+border-bottom:1px solid #eee;
+cursor:pointer;
+}
+.menu div:hover { background:#f0f0f0; }
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+flex:1;
+overflow-y:auto;
+padding-bottom:70px;
+}
+
+/* ===== KPI CARDS ===== */
+.kpi-container {
+display:flex;
+overflow-x:auto;
+padding:10px;
+gap:10px;
+}
+.kpi-card {
+min-width:140px;
+background:white;
+padding:15px;
+border-radius:12px;
+box-shadow:0px 2px 8px rgba(0,0,0,0.2);
+flex-shrink:0;
+transition:transform 0.2s;
+}
+.kpi-card:hover { transform:translateY(-3px); }
+.kpi-title { font-size:14px; color:#555; }
+.kpi-value { font-size:22px; font-weight:bold; margin-top:5px; }
+
+/* ===== SEARCH BOX ===== */
+.search-box {
+margin:15px;
+}
+.search-box input {
+width:100%;
+padding:12px;
+border-radius:10px;
+border:none;
+box-shadow:0px 2px 6px rgba(0,0,0,0.15);
+}
+
+/* ===== RTI LIST ===== */
+#rtiList {
+padding: 0 15px;
+}
+.rti-card {
+background:white;
+margin:10px 0;
+padding:15px;
+border-radius:12px;
+box-shadow:0px 2px 6px rgba(0,0,0,0.15);
+transition:transform 0.2s;
+}
+.rti-card:hover { transform:translateY(-2px); }
+.rti-card div { margin:5px 0; }
+.rti-status {
+float:right;
+font-weight:bold;
+padding:3px 8px;
+border-radius:12px;
+font-size:12px;
+color:#fff;
+}
+.pending { background:#ff4d4d; }
+.processing { background:#ff9933; }
+.resolved { background:#33cc33; }
+
+/* ===== QUICK ACTION BUTTONS ===== */
+.actions {
+margin:15px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+.action-btn {
+background:#0066ff;
+color:white;
+padding:15px;
+border-radius:12px;
+text-align:center;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+text-decoration:none;
+display:block;
+box-shadow:0px 2px 6px rgba(0,0,0,0.15);
+transition:background 0.2s, transform 0.2s;
+}
+.action-btn:hover {
+background:#004bb5;
+transform:translateY(-2px);
+}
+
+/* ===== PROFILE CARD ===== */
+#profileCard {
+background:white;
+padding:15px;
+margin:15px;
+border-radius:12px;
+box-shadow:0px 2px 6px rgba(0,0,0,0.15);
+}
+#profileCard h3 { margin-bottom:10px; }
+#profileCard div { margin:5px 0; }
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav {
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:white;
+display:flex;
+justify-content:space-around;
+padding:12px 0;
+box-shadow:0px -2px 8px rgba(0,0,0,0.15);
+z-index:100;
+}
+.bottom-nav div { text-align:center; font-size:14px; cursor:pointer; }
+.bottom-nav .active { color:#0066ff; font-weight:bold; }
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:400px) {
+.kpi-card { min-width:120px; }
+.action-btn { font-size:15px; padding:12px; }
+.menu { width:150px; }
+}
+</style>
+
+</head>  
+<body>  <!-- TOP BAR -->  <div class="topbar">  
+    <div id="menuToggle">☰ Menu</div>  
+    <span id="dashboardTitle">RTI Dashboard</span>  
+    <div class="language-selector">  
+        <span id="langEN" class="active" onclick="setLanguage('en')">EN</span>  
+        <span id="langHI" onclick="setLanguage('hi')">हिंदी</span>  
+    </div>  
+</div>  <!-- DROPDOWN MENU -->  <div class="menu" id="menuItems">  
+    <div onclick="showSection('dashboard')">📊 Dashboard</div>  
+    <div onclick="window.location.href='track.html'">📄 My RTIs</div>  
+    <div onclick="window.location.href='profile.html'">👤 Profile</div>  
+    <div onclick="logout()">🚪 Logout</div>  
+</div>  <!-- MAIN CONTENT -->  <div class="main-content">  <!-- DASHBOARD -->  
+<div id="dashboardSection">  
+    <div class="kpi-container">  
+        <div class="kpi-card">  
+            <div class="kpi-title" data-en="Total RTIs" data-hi="कुल आरटीआई">Total RTIs</div>  
+            <div class="kpi-value" id="totalCount">0</div>  
+        </div>  
+        <div class="kpi-card">  
+            <div class="kpi-title" data-en="Pending" data-hi="लंबित">Pending</div>  
+            <div class="kpi-value" id="pendingCount">0</div>  
+        </div>  
+        <div class="kpi-card">  
+            <div class="kpi-title" data-en="Processing" data-hi="प्रक्रिया में">Processing</div>  
+            <div class="kpi-value" id="processedCount">0</div>  
+        </div>  
+        <div class="kpi-card">  
+            <div class="kpi-title" data-en="Resolved" data-hi="सुलझा हुआ">Resolved</div>  
+            <div class="kpi-value" id="resolvedCount">0</div>  
+        </div>  
+    </div>  
+
+    <div class="search-box">  
+        <input type="text" id="searchInput" placeholder="Search by Application ID" data-en="Search by Application ID" data-hi="आवेदन आईडी से खोजें">  
+    </div>  
+
+    <div id="rtiList"></div>  
+
+    <div class="actions">  
+        <a href="form.html" class="action-btn" data-en="File RTI" data-hi="आरटीआई दर्ज करें">📂 File RTI</a>  
+        <a href="track.html" class="action-btn" data-en="Track Application" data-hi="आवेदन ट्रैक करें">📂 Track Application</a>  
+        <a href="appeal.html" class="action-btn" data-en="File First Appeal" data-hi="पहली अपील दर्ज करें">📤 File First Appeal</a>  
+    </div>  
+</div>  
+
+<!-- MY RTIs -->  
+<div id="myrtisSection" style="display:none;">  
+    <h2 style="padding:15px;" data-en="My RTIs" data-hi="मेरे आरटीआई">My RTIs</h2>  
+    <div id="myRtiList" style="padding:0 15px;"></div>  
+</div>  
+
+<!-- PROFILE -->  
+<div id="profileSection" style="display:none;">  
+    <h2 style="padding:15px;" data-en="My Profile" data-hi="मेरी प्रोफ़ाइल">My Profile</h2>  
+    <div id="profileCard"></div>  
+</div>
+
+</div>  <!-- BOTTOM NAV -->  <div class="bottom-nav">  
+    <div onclick="showSection('dashboard')" id="navDashboard" class="active" data-en="Home" data-hi="मुख्य पृष्ठ">🏠 Home</div>  
+    <div onclick="window.location.href='track.html'" id="navMyRtis" data-en="My RTIs" data-hi="मेरे आरटीआई">📄 My RTIs</div>  
+    <div onclick="window.location.href='profile.html'" id="navProfile" data-en="Profile" data-hi="प्रोफ़ाइल">👤 Profile</div>  
+</div>  <!-- BACKENDLESS SDK -->  <script src="https://api.backendless.com/sdk/js/latest/backendless.min.js"></script>  <script>  
+const APP_ID = "A1EFA0A2-9F5F-4AB4-B41A-34610BD8119F";  
+const JS_API_KEY = "F7F4D0E1-9677-4715-8C0E-F1FD819B9D69";  
+Backendless.initApp(APP_ID, JS_API_KEY);  
+  
+// MENU TOGGLE  
+const menuToggle = document.getElementById("menuToggle");  
+const menuItems = document.getElementById("menuItems");  
+menuToggle.onclick = () => { menuItems.style.display = menuItems.style.display==="flex" ? "none" : "flex"; }  
+  
+// LOGOUT  
+function logout(){  
+    Backendless.UserService.logout()  
+    .then(()=> { localStorage.clear(); window.location.href = "index.html"; });  
+}  
+  
+// SECTION SWITCH  
+function showSection(section){  
+    document.getElementById('dashboardSection').style.display = section==='dashboard'?'block':'none';  
+    document.getElementById('myrtisSection').style.display = section==='myrtis'?'block':'none';  
+    document.getElementById('profileSection').style.display = section==='profile'?'block':'none';  
+  
+    document.getElementById('navDashboard').classList.toggle('active', section==='dashboard');  
+    document.getElementById('navMyRtis').classList.toggle('active', section==='myrtis');  
+    document.getElementById('navProfile').classList.toggle('active', section==='profile');  
+}  
+  
+// ALL APPLICATIONS  
+let allApplications = [];  
+  
+// FETCH RTI FUNCTION  
+async function fetchRTIs(){  
+    try{  
+        const currentUser = await Backendless.UserService.getCurrentUser();  
+        if(!currentUser) return;  
+  
+        // RTIs  
+        const whereClause = `email = '${currentUser.email}'`;  
+        allApplications = await Backendless.Data.of("RTI_Forms").find({where: whereClause});  
+        updateKPI();  
+        renderList(allApplications);  
+        renderMyRTIs(allApplications);  
+  
+        // Profile  
+        renderProfile(currentUser);  
+  
+        setupRealtime(currentUser.email);  
+    }catch(err){ console.error(err); }  
+}  
+  
+// UPDATE KPI  
+function updateKPI(){  
+    document.getElementById("totalCount").innerText = allApplications.length;  
+    document.getElementById("pendingCount").innerText = allApplications.filter(a=>a.status.toLowerCase()==="pending").length;  
+    document.getElementById("processedCount").innerText = allApplications.filter(a=>a.status.toLowerCase()==="processing").length;  
+    document.getElementById("resolvedCount").innerText = allApplications.filter(a=>a.status.toLowerCase()==="resolved").length;  
+}  
+  
+// RENDER DASHBOARD LIST  
+function renderList(list){  
+    const container = document.getElementById("rtiList");  
+    container.innerHTML = "";  
+    list.forEach(a=>{  
+        const card = document.createElement("div");  
+        card.className = "rti-card";  
+        card.innerHTML = `  
+            <div><b>${a.regNo}</b>  
+                <span class="rti-status ${a.status.toLowerCase()}">${a.status.toUpperCase()}</span>  
+            </div>  
+            <div>Department: ${a.department}</div>  
+            <div>Filed On: ${new Date(a.createdAt).toLocaleDateString()}</div>  
+        `;  
+        container.appendChild(card);  
+    });  
+}  
+  
+// RENDER MY RTIs  
+function renderMyRTIs(list){  
+    const container = document.getElementById("myRtiList");  
+    container.innerHTML = "";  
+    list.forEach(a=>{  
+        const card = document.createElement("div");  
+        card.className = "rti-card";  
+        card.innerHTML = `  
+            <div><b>${a.regNo}</b> - <span class="rti-status ${a.status.toLowerCase()}">${a.status.toUpperCase()}</span></div>  
+            <div>Department: ${a.department}</div>  
+            <div>Filed On: ${new Date(a.createdAt).toLocaleDateString()}</div>  
+            <div>  
+                <a href="details.html?id=${a.objectId}" class="action-btn" style="margin-top:5px;" data-en="View Details" data-hi="विवरण देखें">View Details</a>  
+            </div>  
+        `;  
+        container.appendChild(card);  
+    });  
+}  
+  
+// RENDER PROFILE  
+function renderProfile(user){  
+    const container = document.getElementById("profileCard");  
+    container.innerHTML = `  
+        <h3>${user.name || user.email}</h3>  
+        <div><b>Email:</b> ${user.email}</div>  
+        <div><b>Registered On:</b> ${new Date(user.created).toLocaleDateString()}</div>  
+        <div><b>Last Login:</b> ${new Date(user.lastLogin).toLocaleDateString()}</div>  
+    `;  
+}  
+  
+// SEARCH  
+document.getElementById("searchInput").addEventListener("input", e=>{  
+    const query = e.target.value.toLowerCase();  
+    const filtered = allApplications.filter(a=>a.regNo.toLowerCase().includes(query));  
+    renderList(filtered);  
+});  
+  
+// REALTIME UPDATES  
+async function setupRealtime(userEmail){  
+    const whereClause = `email = '${userEmail}'`;  
+    const rt = Backendless.Data.of("RTI_Forms").rt();  
+  
+    rt.addCreateListener(whereClause, record=>{  
+        allApplications.push(record);  
+        updateKPI();  
+        renderList(allApplications);  
+        renderMyRTIs(allApplications);  
+    });  
+  
+    rt.addUpdateListener(whereClause, record=>{  
+        const index = allApplications.findIndex(a=>a.objectId===record.objectId);  
+        if(index!==-1){  
+            allApplications[index]=record;  
+            updateKPI();  
+            renderList(allApplications);  
+            renderMyRTIs(allApplications);  
+        }  
+    });  
+  
+    rt.addDeleteListener(whereClause, record=>{  
+        allApplications = allApplications.filter(a=>a.objectId!==record.objectId);  
+        updateKPI();  
+        renderList(allApplications);  
+        renderMyRTIs(allApplications);  
+    });  
+}  
+  
+// INITIAL FETCH  
+fetchRTIs();  
+  
+// ===== LANGUAGE SWITCH =====  
+function setLanguage(lang){  
+    // Update active class  
+    document.getElementById('langEN').classList.toggle('active', lang==='en');  
+    document.getElementById('langHI').classList.toggle('active', lang==='hi');  
+  
+    // Update all elements with data-en/data-hi  
+    document.querySelectorAll('[data-en]').forEach(el=>{  
+        el.innerText = (lang==='en') ? el.getAttribute('data-en') : el.getAttribute('data-hi');  
+        // For input placeholders  
+        if(el.tagName==='INPUT' && el.hasAttribute('placeholder')){  
+            el.placeholder = (lang==='en') ? el.getAttribute('data-en') : el.getAttribute('data-hi');  
+        }  
+    });  
+}  
+</script>  </body>
+</html>
