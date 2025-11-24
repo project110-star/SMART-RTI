@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>File First Appeal</title>
+<style>
+body {
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f1f5f9;
+    overflow:hidden;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+/* ===== TOP BAR ===== */
+.topbar {
+    background:#0066ff;
+    color:#fff;
+    padding:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:18px;
+    position:relative;
+}
+.topbar span { font-weight:bold; cursor:pointer; }
+.language-selector {
+    display:flex;
+    gap:10px;
+}
+.language-selector span {
+    cursor:pointer;
+    padding:5px 10px;
+    border-radius:6px;
+    background:rgba(255,255,255,0.2);
+    transition:0.2s;
+}
+.language-selector span.active {
+    background:#fff;
+    color:#0066ff;
+    font-weight:bold;
+}
+
+/* ===== MENU ===== */
+.menu {
+    position:absolute;
+    top:60px;
+    left:0;
+    width:200px;
+    background:white;
+    box-shadow:2px 2px 10px rgba(0,0,0,0.2);
+    display:none;
+    flex-direction:column;
+    border-radius:0 0 10px 10px;
+    z-index:1000;
+}
+.menu div {
+    padding:15px;
+    border-bottom:1px solid #eee;
+    cursor:pointer;
+}
+.menu div:hover { background:#f0f0f0; }
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+    flex:1;
+    overflow-y:auto;
+    padding-bottom:70px;
+}
+
+/* ===== KPI CARDS ===== */
+.kpi-container {
+    display:flex;
+    overflow-x:auto;
+    padding:10px;
+    gap:10px;
+}
+.kpi-card {
+    min-width:140px;
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0px 2px 8px rgba(0,0,0,0.2);
+    flex-shrink:0;
+    transition:transform 0.2s;
+}
+.kpi-card:hover { transform:translateY(-3px); }
+.kpi-title { font-size:14px; color:#555; }
+.kpi-value { font-size:22px; font-weight:bold; margin-top:5px; }
+
+/* ===== APPEAL FORM ===== */
+.form-card {
+    background:white;
+    margin:15px;
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0px 2px 6px rgba(0,0,0,0.15);
+}
+.form-card label { display:block; margin:8px 0 4px; font-weight:bold; }
+.form-card input, .form-card select, .form-card textarea {
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    box-shadow:0px 2px 6px rgba(0,0,0,0.15);
+    margin-bottom:10px;
+}
+textarea { resize:none; height:100px; }
+.submit-btn {
+    background:#0066ff;
+    color:white;
+    padding:12px;
+    border-radius:12px;
+    width:100%;
+    font-weight:bold;
+    cursor:pointer;
+    text-align:center;
+    border:none;
+}
+.submit-btn:hover { background:#004bb5; }
+
+/* ===== APPEAL HISTORY ===== */
+#appealList { padding:0 15px; }
+.appeal-card {
+    background:white;
+    margin:10px 0;
+    padding:12px;
+    border-radius:12px;
+    box-shadow:0px 2px 6px rgba(0,0,0,0.15);
+}
+.appeal-card div { margin:5px 0; }
+.appeal-status {
+    float:right;
+    font-weight:bold;
+    padding:3px 8px;
+    border-radius:12px;
+    font-size:12px;
+    color:#fff;
+}
+.pending { background:#ff4d4d; }
+.processing { background:#ff9933; }
+.resolved { background:#33cc33; }
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav {
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:white;
+    display:flex;
+    justify-content:space-around;
+    padding:12px 0;
+    box-shadow:0px -2px 8px rgba(0,0,0,0.15);
+    z-index:100;
+}
+.bottom-nav div { text-align:center; font-size:14px; cursor:pointer; }
+.bottom-nav .active { color:#0066ff; font-weight:bold; }
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:400px) {
+    .kpi-card { min-width:120px; }
+    .submit-btn { font-size:15px; padding:10px; }
+    .menu { width:150px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+    <div id="menuToggle">☰ Menu</div>
+    <span id="dashboardTitle">File First Appeal</span>
+    <div class="language-selector">
+        <span id="langEN" class="active" onclick="setLanguage('en')">EN</span>
+        <span id="langHI" onclick="setLanguage('hi')">हिंदी</span>
+    </div>
+</div>
+
+<!-- DROPDOWN MENU -->
+<div class="menu" id="menuItems">
+    <div onclick="window.location.href='dashboard.html'">📊 Dashboard</div>
+    <div onclick="window.location.href='track.html'">📄 My RTIs</div>
+    <div onclick="window.location.href='profile.html'">👤 Profile</div>
+    <div onclick="logout()">🚪 Logout</div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    <!-- KPI CARDS -->
+    <div class="kpi-container">
+        <div class="kpi-card">
+            <div class="kpi-title" data-en="Total Appeals" data-hi="कुल अपील">Total Appeals</div>
+            <div class="kpi-value" id="totalCount">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title" data-en="Pending" data-hi="लंबित">Pending</div>
+            <div class="kpi-value" id="pendingCount">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title" data-en="Processed" data-hi="प्रक्रिया में">Processed</div>
+            <div class="kpi-value" id="processedCount">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title" data-en="Resolved" data-hi="सुलझा हुआ">Resolved</div>
+            <div class="kpi-value" id="resolvedCount">0</div>
+        </div>
+    </div>
+
+    <!-- APPEAL FORM -->
+    <div class="form-card">
+        <label data-en="Select RTI Application" data-hi="आरटीआई आवेदन चुनें">Select RTI Application</label>
+        <select id="rtiSelect"></select>
+
+        <label data-en="Department" data-hi="विभाग">Department</label>
+        <input type="text" id="department" readonly>
+
+        <label data-en="Reason for Appeal" data-hi="अपील का कारण">Reason for Appeal</label>
+        <textarea id="reason" placeholder="Explain your appeal"></textarea>
+
+        <label data-en="Upload Supporting Document (Optional)" data-hi="सहायक दस्तावेज़ अपलोड करें (वैकल्पिक)">Upload Supporting Document</label>
+        <input type="file" id="document" accept=".pdf,.jpg,.png">
+
+        <button class="submit-btn" id="submitBtn" data-en="Submit Appeal" data-hi="अपील सबमिट करें">Submit Appeal</button>
+    </div>
+
+    <!-- APPEAL HISTORY -->
+    <div id="appealList"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+    <div onclick="window.location.href='dashboard.html'" class="active" data-en="Home" data-hi="मुख्य पृष्ठ">🏠 Home</div>
+    <div onclick="window.location.href='track.html'" data-en="My RTIs" data-hi="मेरे आरटीआई">📄 My RTIs</div>
+    <div onclick="window.location.href='profile.html'" data-en="Profile" data-hi="प्रोफ़ाइल">👤 Profile</div>
+</div>
+
+<script src="https://api.backendless.com/sdk/js/latest/backendless.min.js"></script>
+<script>
+// BACKENDLESS INIT
+const APP_ID = "A1EFA0A2-9F5F-4AB4-B41A-34610BD8119F";
+const JS_API_KEY = "F7F4D0E1-9677-4715-8C0E-F1FD819B9D69";
+Backendless.initApp(APP_ID, JS_API_KEY);
+
+// MENU TOGGLE
+const menuToggle = document.getElementById("menuToggle");
+const menuItems = document.getElementById("menuItems");
+menuToggle.onclick = () => { menuItems.style.display = menuItems.style.display==="flex" ? "none" : "flex"; }
+
+// LOGOUT
+function logout(){
+    Backendless.UserService.logout().then(()=> { localStorage.clear(); window.location.href = "index.html"; });
+}
+
+// FETCH RTIs
+let allRTIs = [];
+let allAppeals = [];
+async function fetchRTIs(){
+    const user = await Backendless.UserService.getCurrentUser();
+    if(!user) return;
+
+    // Fetch user RTIs
+    allRTIs = await Backendless.Data.of("RTI_Forms").find({where:`email='${user.email}'`});
+    const select = document.getElementById("rtiSelect");
+    select.innerHTML = "<option value=''>Select Application</option>";
+    allRTIs.forEach(rti=>{
+        const opt = document.createElement("option");
+        opt.value = rti.objectId;
+        opt.textContent = rti.regNo;
+        select.appendChild(opt);
+    });
+
+    // Fetch Appeals
+    allAppeals = await Backendless.Data.of("Appeals").find({where:`email='${user.email}'`, sortBy:"createdAt DESC"});
+    renderAppeals();
+    updateKPI();
+}
+
+// PREFILL DEPARTMENT
+document.getElementById("rtiSelect").addEventListener("change", e=>{
+    const rti = allRTIs.find(r=>r.objectId===e.target.value);
+    document.getElementById("department").value = rti ? rti.department : "";
+});
+
+// SUBMIT APPEAL
+document.getElementById("submitBtn").addEventListener("click", async ()=>{
+    const rtiId = document.getElementById("rtiSelect").value;
+    const reason = document.getElementById("reason").value.trim();
+    const docInput = document.getElementById("document");
+
+    if(!rtiId || !reason){ alert("Please select RTI and provide reason."); return; }
+
+    let docURL="";
+    if(docInput.files.length>0){
+        const file = docInput.files[0];
+        const uploaded = await Backendless.Files.upload(file, `appeals/${Date.now()}_${file.name}`, true);
+        docURL = uploaded.fileURL;
+    }
+
+    const user = await Backendless.UserService.getCurrentUser();
+    const newAppeal = await Backendless.Data.of("Appeals").save({
+        regNo: allRTIs.find(r=>r.objectId===rtiId).regNo,
+        objectId_rti: rtiId,
+        email: user.email,
+        department: document.getElementById("department").value,
+        reason: reason,
+        documentURL: docURL,
+        status:"Pending",
+        createdAt:new Date()
+    });
+
+    allAppeals.unshift(newAppeal);
+    renderAppeals();
+    updateKPI();
+    document.getElementById("reason").value="";
+    document.getElementById("document").value="";
+    document.getElementById("rtiSelect").value="";
+    document.getElementById("department").value="";
+});
+
+// RENDER APPEALS
+function renderAppeals(){
+    const container = document.getElementById("appealList");
+    container.innerHTML="";
+    allAppeals.forEach(a=>{
+        const card = document.createElement("div");
+        card.className="appeal-card";
+        card.innerHTML=`
+            <div><b>${a.regNo}</b> <span class="appeal-status ${a.status.toLowerCase()}">${a.status}</span></div>
+            <div>Department: ${a.department}</div>
+            <div>Reason: ${a.reason}</div>
+            <div>Filed On: ${new Date(a.createdAt).toLocaleDateString()}</div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// UPDATE KPI
+function updateKPI(){
+    document.getElementById("totalCount").innerText = allAppeals.length;
+    document.getElementById("pendingCount").innerText = allAppeals.filter(a=>a.status.toLowerCase()==="pending").length;
+    document.getElementById("processedCount").innerText = allAppeals.filter(a=>a.status.toLowerCase()==="processing").length;
+    document.getElementById("resolvedCount").innerText = allAppeals.filter(a=>a.status.toLowerCase()==="resolved").length;
+}
+
+// LANGUAGE SWITCH
+function setLanguage(lang){
+    document.getElementById('langEN').classList.toggle('active', lang==='en');
+    document.getElementById('langHI').classList.toggle('active', lang==='hi');
+    document.querySelectorAll('[data-en]').forEach(el=>{
+        el.innerText = (lang==='en')?el.getAttribute('data-en'):el.getAttribute('data-hi');
+        if(el.tagName==='INPUT' && el.hasAttribute('placeholder')) el.placeholder=(lang==='en')?el.getAttribute('data-en'):el.getAttribute('data-hi');
+    });
+}
+
+// INITIAL FETCH
+fetchRTIs();
+</script>
+</body>
+</html>
