@@ -139,14 +139,13 @@ if (!localStorage.getItem("userRole")) {
   id("liveMsg").innerText = "⚠️ Please login first!";
   setTimeout(() => window.location.href = "login.html", 2000);
 }
-
-// ====== LOGOUT ======
-function logout() {
-  localStorage.clear();
-  id("liveMsg").innerText = "Logged out!";
-  setTimeout(() => window.condition ? true : false.location.href = "login.html", 1000);
+function logout() {  
+  localStorage.clear();  
+  id("liveMsg").innerText = "Logged out!";  
+  setTimeout(() => {  
+      window.location.href = "login.html";  
+  }, 1000);  
 }
-
 // ====== PINCODE RANGE ======
 const PINCODE_RANGE = {
   "Andhra Pradesh": [500000, 539999],
