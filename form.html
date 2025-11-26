@@ -2907,7 +2907,14 @@ function logout(){
   setTimeout(()=> window.location.href = "login.html", 900);
 }
 
+let captchaValue = "";
 
+function loadCaptcha() {
+  captchaValue = Math.random().toString(36).substring(2, 7).toUpperCase();
+  captchaBox.innerHTML = captchaValue;
+}
+captchaRefresh.onclick = loadCaptcha;
+loadCaptcha();
 
 /* ========== AI-like verification ========== */
 function aiVerifyRTI(){
