@@ -2925,7 +2925,7 @@ function aiVerifyRTI() {
     ai.innerHTML = "✔ AI: your rti is Valid ";
   } else if (score >= 50) {
     ai.className = "warn";
-    ai.innerHTML = "⚠ your RTI is valid but not properly + result;
+    ai.innerHTML = "⚠ Your RTI is valid but not fully correct:<br>" + result;
   } else {
     ai.className = "error";
     ai.innerHTML = "❌ AI: Major issues found:<br>" + result;
