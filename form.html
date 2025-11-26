@@ -2985,6 +2985,15 @@ function logout() {
   Backendless.UserService.logout()
     .then(() => location.href = "index.html");
 }
+
+
+
+
+// JAB BHI KOI ERROR AAYE → AUTOMATIC POP-UP SHOW HOGA
+window.onerror = function (msg, url, line) {
+  alert("⚠ Error: " + msg + "\nLine: " + line);
+  return false;
+};
 </script>
 </body>
 </html>
