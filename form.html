@@ -104,15 +104,6 @@
     <textarea id="rtiText" placeholder="Write full details..." required></textarea>
     <div class="muted">Tip: Add specifics — location landmark, time, previous complaints (if any).</div>
 
-    <label>Auto Location (GPS)</label>
-    <div class="row">
-      <input id="geo" readonly placeholder="Click 'Fetch Location' to auto-fill" class="col">
-      <button class="btn inline" type="button" onclick="getLocation()">Fetch Location</button>
-    </div>
-
-    <label>Photo Proof (recommended)</label>
-    <input id="photo" type="file" accept="image/*" capture="camera">
-
     <div class="captcha-row" style="margin-top:8px">
       <div id="captchaBox"></div>
       <input id="captchaInput" placeholder="Enter Captcha" style="flex:1">
@@ -2916,20 +2907,7 @@ function logout(){
   setTimeout(()=> window.location.href = "login.html", 900);
 }
 
-/* ========== Geolocation ========== */
-function getLocation(){
-  if (!navigator.geolocation) {
-    alert("Geolocation not supported on this device.");
-    return;
-  }
-  id("geo").value = "Fetching...";
-  navigator.geolocation.getCurrentPosition(pos => {
-    id("geo").value = `Lat:${pos.coords.latitude.toFixed(5)}, Lon:${pos.coords.longitude.toFixed(5)}`;
-  }, err => {
-    id("geo").value = "";
-    alert("Please allow location permission or try again.");
-  }, {enableHighAccuracy:true, timeout:10000});
-}
+
 
 /* ========== AI-like verification ========== */
 function aiVerifyRTI(){
@@ -3025,26 +3003,7 @@ async function submitRTI(){
   // run simple aiVerifyRTI logic to warn user (but not block)
   aiVerifyRTI();
 
-  // Upload photo if present
-  const fileInput = id("photo");
-  let fileURL = "";
-  if (fileInput.files && fileInput.files[0]) {
-    try {
-      id("liveMsg").innerText = "Uploading photo...";
-      const file = fileInput.files[0];
-      // Backendless.Files.upload expects file or blob and folder path; it returns a promise
-      const folder = "rti_photos";
-      const uploadResult = await Backendless.Files.upload(file, folder, true);
-      // uploadResult is an array for multiple? SDK returns object with fileURL for single
-      // safe-get fileURL
-      fileURL = Array.isArray(uploadResult) ? (uploadResult[0].fileURL || "") : (uploadResult.fileURL || uploadResult[0]?.fileURL || "");
-      data.photo = fileURL;
-    } catch (err) {
-      console.error(err);
-      id("liveMsg").innerText = "❌ Photo upload failed. Try again.";
-      return;
-    }
-  }
+  
 
   // Save to Backendless DB
   try {
