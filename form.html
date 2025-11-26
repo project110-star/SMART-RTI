@@ -3120,6 +3120,54 @@ window.addEventListener("DOMContentLoaded", () => {
     // loadStates() already uses window.RTI_DATASET
   }
 });
+
+
+/* ================== SUBMIT FUNCTION ================== */
+async function submitRTI() {
+  const msg = document.getElementById("liveMsg");
+  msg.innerText = "Submitting… Please wait.";
+
+  const cap = document.getElementById("captchaInput").value.trim();
+  if (cap !== currentCaptcha) {
+    msg.innerText = "❌ Incorrect Captcha!";
+    return;
+  }
+
+  const data = {
+    regNo: document.getElementById("regNo").value,
+    state: document.getElementById("state").value,
+    department: document.getElementById("department").value,
+    subject: document.getElementById("subject").value,
+    name: document.getElementById("name").value,
+    gender: document.getElementById("gender").value,
+    age: document.getElementById("age").value,
+    addr1: document.getElementById("addr1").value,
+    addr2: document.getElementById("addr2").value,
+    pincode: document.getElementById("pincode").value,
+    mobile: document.getElementById("mobile").value,
+    email: document.getElementById("email").value,
+    rtiText: document.getElementById("rtiText").value,
+    submittedAt: new Date().toISOString()
+  };
+
+  try {
+    await Backendless.Data.of("RTI_Forms").save(data);
+    msg.style.color = "green";
+    msg.innerText = "✔ RTI Submitted Successfully!";
+    alert("RTI Submitted Successfully!");
+
+    document.getElementById("rtiForm").reset();
+    generateCaptcha();
+
+  } catch (err) {
+    msg.style.color = "red";
+    msg.innerText = "❌ Error submitting form!";
+    console.error(err);
+  }
+}
+
+/* Auto Registration No */
+document.getElementById("regNo").value = "RTI-" + Math.floor(Math.random() * 900000 + 100000);
 </script>
 
 </body>
