@@ -3021,6 +3021,81 @@ async function submitRTI(){
   }
 }
 
+/* ========== AUTO REG NUMBER ========== */
+function generateRegNo() {
+  return "RTI-" + Date.now();
+}
+document.getElementById("regNo").value = generateRegNo();
+
+/* ========== SUBMIT RTI FUNCTION ========== */
+async function submitRTI() {
+  const state = state.value.trim();
+  const dept = department.value.trim();
+  const subjectTxt = subject.value.trim();
+  const nameVal = name.value.trim();
+  const ageVal = age.value.trim();
+  const addr1Val = addr1.value.trim();
+  const pincodeVal = pincode.value.trim();
+  const mobileVal = mobile.value.trim();
+  const emailVal = email.value.trim();
+  const rtiTxt = rtiText.value.trim();
+  const captchaVal = captchaInput.value.trim();
+
+  // ----- VALIDATION -----
+  if (!state || !dept || !subjectTxt || !nameVal || !addr1Val || !pincodeVal || !mobileVal || !emailVal || !rtiTxt) {
+    liveMsg.innerHTML = "❌ Please fill all required fields.";
+    return;
+  }
+
+  // PINCODE RANGE CHECK
+  if (PINCODE_RANGE[state]) {
+    let [min, max] = PINCODE_RANGE[state];
+    if (!(pincodeVal >= min && pincodeVal <= max)) {
+      liveMsg.innerHTML = "❌ Pincode does not match selected state.";
+      return;
+    }
+  }
+
+  // CAPTCHA CHECK
+  if (captchaVal !== captchaValue) {
+    liveMsg.innerHTML = "❌ Captcha incorrect.";
+    return;
+  }
+
+  liveMsg.innerHTML = "⏳ Submitting...";
+
+  // SAVE TO BACKENDLESS
+  const data = {
+    regNo: regNo.value,
+    state,
+    department: dept,
+    subject: subjectTxt,
+    name: nameVal,
+    gender: gender.value,
+    age: ageVal,
+    addr1: addr1Val,
+    addr2: addr2.value.trim(),
+    pincode: pincodeVal,
+    mobile: mobileVal,
+    email: emailVal,
+    rtiText: rtiTxt,
+    createdOn: new Date().toISOString()
+  };
+
+  try {
+    await Backendless.Data.of("RTI_Form").save(data);
+    liveMsg.innerHTML = "✅ Your RTI has been successfully submitted!";
+    liveMsg.style.color = "#0A6522";
+
+    // Reset except regNo
+    document.getElementById("rtiForm").reset();
+    regNo.value = generateRegNo();
+    loadCaptcha();
+
+  } catch (e) {
+    liveMsg.innerHTML = "❌ Error submitting: " + e.message;
+  }
+}
 /* ========== INIT on load ========== */
 window.addEventListener("DOMContentLoaded", () => {
   // init reg no
