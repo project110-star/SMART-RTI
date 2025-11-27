@@ -3027,7 +3027,6 @@ window.onerror = function (msg, url, line) {
 
 
 <!-- ===== Minimal JS for char counter & hide behavior ===== -->
-<script>
   (function() {
     const reason = document.getElementById('reason');
     const charCount = document.getElementById('charCount');
@@ -3075,6 +3074,7 @@ window.onerror = function (msg, url, line) {
       hidden.value = noReason.checked ? '1' : '0';
       // No other validation is enforced here because reason is optional.
     });
+})();
 </script>
 </body>
 </html>
