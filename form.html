@@ -96,6 +96,36 @@
         <input id="mobile" placeholder="Mobile number" required>
       </div>
     </div>
+<!-- ===== RTI: Reason / Purpose Field (Optional) ===== -->
+<fieldset class="form-group" style="border:none;padding:0;margin:0;">
+  <label for="reason" style="display:block;font-weight:600;margin-bottom:6px;">
+    Purpose / Reason for requesting information
+    <small style="font-weight:400;display:block;font-size:0.9rem;color:#666;">
+      (Optional) — bata sakte ho agar aap chaho. RTI me reason dena zaroori nahi hai.
+    </small>
+  </label>
+
+  <!-- Optional toggle: prefer not to state -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+    <input type="checkbox" id="noReason" name="noReason" value="no-reason">
+    <label for="noReason" style="margin:0;user-select:none;">I prefer not to state a reason</label>
+  </div>
+
+  <!-- Textarea with char counter -->
+  <textarea id="reason" name="reason"
+    placeholder="Agar aap reason dena chahte ho to yahan likho (max 300 characters)..."
+    rows="4"
+    maxlength="300"
+    style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #ccc;border-radius:6px;resize:vertical;font-family:inherit;font-size:0.95rem;">
+  </textarea>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+    <small id="reasonHint" style="color:#666;font-size:0.85rem;">
+      Max 300 characters.
+    </small>
+    <small id="charCount" style="color:#666;font-size:0.85rem;">0 / 300</small>
+  </div>
+</fieldset>
 
     <label>Email</label>
     <input id="email" type="email" placeholder="Email address" required>
@@ -2994,6 +3024,59 @@ window.onerror = function (msg, url, line) {
   alert("⚠ Error: " + msg + "\nLine: " + line);
   return false;
 };
+
+
+<!-- ===== Minimal JS for char counter & hide behavior ===== -->
+<script>
+  (function() {
+    const reason = document.getElementById('reason');
+    const charCount = document.getElementById('charCount');
+    const noReason = document.getElementById('noReason');
+    const form = document.getElementById('rtiForm'); // update if your form id is different
+
+    // Init counter
+    charCount.textContent = reason.value.trim().length + ' / ' + reason.maxLength;
+
+    // Update counter live
+    reason.addEventListener('input', () => {
+      charCount.textContent = reason.value.trim().length + ' / ' + reason.maxLength;
+      // If user types, uncheck "prefer not to state"
+      if (reason.value.trim().length > 0 && noReason.checked) {
+        noReason.checked = false;
+      }
+    });
+
+    // If user checks "prefer not to state" -> clear and disable textarea
+    noReason.addEventListener('change', () => {
+      if (noReason.checked) {
+        reason.value = '';
+        reason.setAttribute('disabled', 'disabled');
+        charCount.textContent = '0 / ' + reason.maxLength;
+      } else {
+        reason.removeAttribute('disabled');
+        charCount.textContent = reason.value.trim().length + ' / ' + reason.maxLength;
+        reason.focus();
+      }
+    });
+
+    // Optional: prevent form submission if textarea disabled & some server expects a value
+    // (Remove if your backend handles optional reason correctly)
+    form.addEventListener('submit', (e) => {
+      // Example: attach a hidden field to indicate user explicitly chose not to state reason
+      // (This helps backend know the user actively skipped the reason)
+      let hidden = document.getElementById('noReasonHiddenFlag');
+      if (!hidden) {
+        hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.id = 'noReasonHiddenFlag';
+        hidden.name = 'noReasonFlag';
+        form.appendChild(hidden);
+      }
+      hidden.value = noReason.checked ? '1' : '0';
+      // No other validation is enforced here because reason is optional.
+    });
+
+  })();
 </script>
 </body>
 </html>
